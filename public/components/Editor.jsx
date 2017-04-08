@@ -17,8 +17,8 @@ class Editor extends Component {
     this.props.save({
       name: this.state.name,
       ingredients: this.state.ingredients,
+      _id: this.props.recipe._id
     })
-    console.log(this.state)
     this.props.onHide()
   }
   handleName(event) {
@@ -27,8 +27,14 @@ class Editor extends Component {
   handleIngredients(event) {
     this.setState({ingredients: event.target.value})
   }
+  componentWillReceiveProps(props) {
+    this.setState({
+      name: props.recipe.name,
+      ingredients: props.recipe.ingredients,
+      _id: props.recipe._id
+    })
+  }
   render() {
-    var recipe = this.props.recipe || {};
     return (
       <Modal show={this.props.show} onHide={this.props.onHide}>
         <Modal.Header closeButton>

@@ -32,7 +32,6 @@ function getRecipes() {
 
 function deleteRecipe(recipe) {
   storage.removeItem('recipe' + recipe._id)
-  console.log(storage)
 }
 
 function saveRecipe(recipe) {

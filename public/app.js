@@ -19,6 +19,7 @@ class App extends React.Component {
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
     this.save = this.save.bind(this);
+    this.edit = this.edit.bind(this);
     this.deleteRecipe = this.deleteRecipe.bind(this);
   }
   close() {
@@ -42,16 +43,25 @@ class App extends React.Component {
     data.deleteRecipe(recipe);
     this.setState({recipes: data.getRecipes()})
   }
+  edit(recipe) {
+    console.log(recipe)
+    this.setState({
+      workingRecipe: recipe
+    }, () => {
+      this.setState({
+        showModal: true
+      })
+    })
+  }
   render() {
     var recipes = this.state.recipes.map((recipe) => {
-      console.log(JSON.stringify(recipe))
-      return (<Recipe recipe={recipe} delete={this.deleteRecipe} />)
+      return (<Recipe recipe={recipe} delete={this.deleteRecipe} edit={this.edit} />)
     })
     return (
       <div className="container">
         <div className="panel">
           <div className="panel-heading">
-            <h4>Recipe Box <button className="btn btn-danger" onClick={this.reset}>Reset</button></h4>
+            <h4>Recipe Box</h4>
           </div>
         </div>
         <Editor save={this.save} show={this.state.showModal} onHide={this.close} recipe={this.state.workingRecipe} />
