@@ -1,78 +1,67 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Modal } from 'react-bootstrap';
+import Recipe from './components/Recipe.jsx';
+import Editor from './components/Editor.jsx';
 
-var Toggle = () => {
-  return (
-    <button
-      type="button"
-      className="btn btn-primary btn-lg"
-      data-toggle="modal"
-      data-target="modal">
-      hello world
-    </button>
-  )
-}
+var data = require('./data/data');
+data.initialize(window.localStorage);
 
-// var Modal = () => {
-//   return (
-//     <div id="modal" className="modal fade" tabIndex="-1" role="dialog">
-//       <div className="modal-dialog" role="document">
-//         <div className="modal-content">
-//           <div className="modal-header">
-//             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-//               <span aria-hidden="true">&times;</span>
-//             </button>
-//             <h4 className="modal-title">Title</h4>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-var App = () => {
-  return (
-    <div id="container">
-      <Toggle />
-      <Modal />
-    </div>
-  )
-}
-
-class ControlledModal extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showModal: false
+      showModal: false,
+      workingRecipe: {},
+      recipes: data.getRecipes()
     }
+    this.reset = this.reset.bind(this);
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
+    this.save = this.save.bind(this);
+    this.deleteRecipe = this.deleteRecipe.bind(this);
   }
-
   close() {
     this.setState({showModal: false});
   }
-
   open() {
-    this.setState({showModal: true});
+    this.setState({
+      showModal: true,
+      workingRecipe: {},
+    });
   }
-
+  reset() {
+    localStorage.clear();
+    location.reload();
+  }
+  save(recipe) {
+    data.saveRecipe(recipe)
+    this.setState({recipes: data.getRecipes()})
+  }
+  deleteRecipe(recipe) {
+    data.deleteRecipe(recipe);
+    this.setState({recipes: data.getRecipes()})
+  }
   render() {
+    var recipes = this.state.recipes.map((recipe) => {
+      console.log(JSON.stringify(recipe))
+      return (<Recipe recipe={recipe} delete={this.deleteRecipe} />)
+    })
     return (
-      <div id="container">
-        <Button onClick={this.open}>
-          Launch Modal
-        </Button>
-
-        <Modal show={this.state.showModal} onHide={this.close}>
-          <Modal.Header closeButton>
-            <Modal.Title>Modal header</Modal.Title>
-          </Modal.Header>
-        </Modal>
+      <div className="container">
+        <div className="panel">
+          <div className="panel-heading">
+            <h4>Recipe Box <button className="btn btn-danger" onClick={this.reset}>Reset</button></h4>
+          </div>
+        </div>
+        <Editor save={this.save} show={this.state.showModal} onHide={this.close} recipe={this.state.workingRecipe} />
+        {recipes}
+        <div className="panel">
+          <Button onClick={this.open} className="btn-primary">New Recipe</Button>
+        </div>
       </div>
     )
   }
 }
 
-ReactDOM.render(<ControlledModal />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
