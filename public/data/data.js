@@ -1,10 +1,11 @@
-
 var seed = require('./seed')
 var storage;
 
+const COUNTER_KEY = '_mt_counter';
+
 function initialize(storageType) {
   storage = storageType;
-  if (storage.getItem('counter') === null) {
+  if (storage.getItem(COUNTER_KEY) === null) {
     seedStorage();
   }
 }
@@ -43,12 +44,12 @@ function saveRecipe(recipe) {
 }
 
 function newItem(recipe) {
-  var counter = storage.getItem('counter') || 0;
+  var counter = storage.getItem(COUNTER_KEY) || 0;
   counter = +counter + 1;
   recipe._id = counter;
   var key = 'recipe' + counter;
   storage.setItem(key, JSON.stringify(recipe));
-  storage.setItem('counter', counter);
+  storage.setItem(COUNTER_KEY, counter);
 }
 
 module.exports = {
